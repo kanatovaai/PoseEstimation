@@ -25,13 +25,12 @@ def calculate_angle(a, b, c):
     return angle
 
 
-# Path to your video file
-video_path = "poseVideos/7.mp4"  # Replace this with the path to your video
+video_path = "poseVideos/7.mp4" 
 
-# Set up video feed
+
 cap = cv2.VideoCapture(video_path)
 
-# Curl counter variables
+
 counter = 0
 stage = None
 frame_skip = 2  # Skipping frames to make video play faster
@@ -68,14 +67,14 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
 
             # Calculate the angle between shoulder, elbow, and wrist
             angle = calculate_angle(shoulder, elbow, wrist)
-            cv2.putText(image, str(int(angle)),
-                        tuple(np.multiply(elbow, [640, 480]).astype(int)),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
+           # cv2.putText(image, str(int(angle)),
+            #            tuple(np.multiply(elbow, [640, 480]).astype(int)),
+             #           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
 
-            # Curl counter logic
+            
             if angle > 160:  # Arm fully extended, in "down" position
                 stage = "down"
-            if angle < 30 and stage == 'down':  # Arm in "up" position after full curl
+            if angle < 40 and stage == 'down':  # Arm in "up" position after full curl
                 stage = "up"
                 counter += 1
                 print("Curls:", counter)
@@ -83,7 +82,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
         except:
             pass
 
-        # Render the counter and stage text on the image
+        
         cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
         cv2.putText(image, 'REPS', (15, 12),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 0), 1, cv2.LINE_AA)
@@ -96,15 +95,15 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                     (60, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
-        # Draw pose landmarks on the image
+        
         mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                   mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
                                   mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
-        # Display the output
+        
         cv2.imshow('Mediapipe Feed', image)
 
-        # Break the loop if 'q' key is pressed
+        
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
